@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write # lets the job sign in to AWS with OIDC
   contents: read
 
 concurrency:
@@ -26,7 +25,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install pytest boto3 cfn-lint
-      - run: cfn-lint template.yaml infra/github-oidc.yaml
+      - run: cfn-lint template.yaml
       - run: pytest -q
 
   deploy:
@@ -40,7 +39,8 @@ jobs:
       - uses: aws-actions/setup-sam@v2
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Deploy backend (Lambda, API, EventBridge, CloudFront, S3)

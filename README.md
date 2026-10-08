@@ -18,24 +18,27 @@ Visitor ──HTTPS──> CloudFront ──(OAC)──> private S3 bucket      
 | API Gateway + API key | `/api/*` requires a key. CloudFront adds it, so the browser never holds it. |
 | Parameter Store | Holds the key value (`/portfolio/api-key`); it is not in this repo. |
 | EventBridge | Runs the Lambda daily to write a `STATS#<date>` snapshot to DynamoDB. |
-| GitHub Actions | Tests, `sam deploy`, `s3 sync`, CloudFront invalidation. Signs in with OIDC, no stored keys. |
+| GitHub Actions | Tests, `sam deploy`, `s3 sync`, CloudFront invalidation. Signs in with repository secrets. |
 
 ## First-time setup
 
-1. Sign in to AWS in your terminal (`aws login`), region `us-east-2`.
-2. `scripts/bootstrap.sh <github-user>/<repo>` creates the API key parameter and the GitHub sign-in role, and prints the role ARN.
-3. In the GitHub repo, add a repository **variable** (not a secret) `AWS_ROLE_ARN` with that ARN.
-4. Push to `main`. The Actions run prints the live URL in its summary.
+1. Sign in to AWS (`aws login`), region `us-east-2`.
+2. Store the API key value once: `aws ssm put-parameter --name /portfolio/api-key --type String --value "$(openssl rand -hex 24)"`
+3. Deploy once by hand: `sam build && sam deploy --guided`, then `aws s3 sync site/ s3://<SiteBucketName>/ --delete`.
+4. Create an IAM user for deployments and add its keys as GitHub repository secrets
+   `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (`gh secret set <NAME>` prompts for the value).
+5. From then on, every push to `main` tests, deploys, syncs, and invalidates the cache.
+   The live URL appears in the run summary.
 
 ## Local checks
 
 ```
 pip install pytest boto3 cfn-lint
-cfn-lint template.yaml infra/github-oidc.yaml
+cfn-lint template.yaml
 pytest
 ```
 
 ## Cleanup
 
-Delete the `aws-portfolio` stack (empty the site bucket first), then the
-`portfolio-github-oidc` stack and the `/portfolio/api-key` parameter.
+Empty the site bucket, delete the `aws-portfolio` stack, then delete the
+`/portfolio/api-key` parameter and the deploy IAM user.

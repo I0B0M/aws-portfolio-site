@@ -315,27 +315,36 @@
       </div>
     </section>
 
-    <!-- LIVE FROM AWS: shows real responses from the Lambda API -->
+    <!-- MARKET PULSE: live stock quotes served by the Lambda API -->
     <section class="section" id="live">
       <div class="container">
         <header class="section__header">
           <span class="section__label">Live</span>
-          <h2 class="section__title">Live from AWS</h2>
+          <h2 class="section__title">Market Pulse</h2>
         </header>
-        <p class="live__intro">When this page loaded, your browser called a Lambda function through API Gateway. Below is what came back, as it happened.</p>
-        <ul class="stats">
-          <li class="card stat"><b class="stat__num" id="live-visits">…</b><span class="stat__label">Total visits</span></li>
-          <li class="card stat"><b class="stat__num" id="live-messages">…</b><span class="stat__label">Messages received</span></li>
-          <li class="card stat"><b class="stat__num" id="live-snapshot">…</b><span class="stat__label">Visits at last daily snapshot (EventBridge)</span></li>
-          <li class="card stat"><b class="stat__num" id="live-latency">…</b><span class="stat__label">API round trip</span></li>
-        </ul>
-        <div class="card live__console">
-          <h3 class="live__heading">Raw API responses</h3>
-          <div id="live-log" class="live__log" aria-live="polite">
-            <p class="live__wait">Calling the API…</p>
-          </div>
+        <p class="live__intro">Live stock quotes, served by my own AWS backend. A Lambda function pulls them from the Alpaca market data API every 15 minutes (triggered by EventBridge), keeps the API key encrypted in Parameter Store, and this page reads the result.</p>
+
+        <div class="pulse" id="pulse" aria-live="polite">
+          <p class="pulse__wait">Loading quotes…</p>
         </div>
-        <p class="live__how"><code>Browser</code> → <code>CloudFront</code> → <code>API Gateway (API key)</code> → <code>Lambda</code> → <code>DynamoDB</code>. EventBridge runs the Lambda daily to snapshot the totals.</p>
+        <p class="pulse__meta" id="pulse-meta"></p>
+
+        <details class="card live__console" id="pulse-raw">
+          <summary class="live__heading">Show API response</summary>
+          <pre class="live__json" id="pulse-json">Waiting for the API…</pre>
+        </details>
+
+        <details class="card live__console">
+          <summary class="live__heading">Under the hood: visits, snapshots, and every call this page made</summary>
+          <ul class="stats live__stats">
+            <li class="card stat"><b class="stat__num" id="live-visits">…</b><span class="stat__label">Total visits</span></li>
+            <li class="card stat"><b class="stat__num" id="live-messages">…</b><span class="stat__label">Messages received</span></li>
+            <li class="card stat"><b class="stat__num" id="live-snapshot">…</b><span class="stat__label">Visits at last daily snapshot (EventBridge)</span></li>
+            <li class="card stat"><b class="stat__num" id="live-latency">…</b><span class="stat__label">API round trip</span></li>
+          </ul>
+          <div id="live-log" class="live__log"><p class="live__wait">Calling the API…</p></div>
+          <p class="live__how"><code>Browser</code> → <code>CloudFront</code> → <code>API Gateway (API key)</code> → <code>Lambda</code> → <code>DynamoDB</code> / <code>Alpaca</code>. Keys live in Parameter Store.</p>
+        </details>
       </div>
     </section>
 

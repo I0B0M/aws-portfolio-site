@@ -136,9 +136,17 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref Table
+          SYMBOLS: AMZN,NVDA,AAPL
+          ALPACA_KEY_PARAM: /portfolio/alpaca-key-id
+          ALPACA_SECRET_PARAM: /portfolio/alpaca-secret
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref Table
+        # Read (and decrypt) the Alpaca keys from Parameter Store at runtime.
+        - Statement:
+            - Effect: Allow
+              Action: [ssm:GetParameter, ssm:GetParameters]
+              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/portfolio/alpaca-*"
       Events:
         Visit:
           Type: Api
@@ -152,6 +160,12 @@ Resources:
             RestApiId: !Ref PortfolioApi
             Path: /api/visits
             Method: GET
+        Quotes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PortfolioApi
+            Path: /api/quotes
+            Method: GET
         Stats:
           Type: Api
           Properties:
@@ -164,6 +178,13 @@ Resources:
             RestApiId: !Ref PortfolioApi
             Path: /api/contact
             Method: POST
+        # EventBridge rule: every 15 minutes, fetch fresh stock quotes into DynamoDB.
+        QuotesRefresh:
+          Type: Schedule
+          Properties:
+            Schedule: rate(15 minutes)
+            Description: Refresh Alpaca stock quotes
+            Input: '{"task": "refresh_quotes"}'
         # EventBridge rule: once a day, freeze the totals into a STATS#<date> item.
         DailySnapshot:
           Type: Schedule

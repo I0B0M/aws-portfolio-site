@@ -6,16 +6,24 @@ One DynamoDB table holds everything, keyed by `pk`:
   MSG#<ts>#<id>    one contact message
   STATS#<date>     one daily snapshot, written by the EventBridge schedule
   LATEST           copy of the newest snapshot, so the site can read it in one call
+  QUOTES           latest stock quotes from Alpaca, refreshed by an EventBridge schedule
 """
 import json
 import os
 import re
+import urllib.error
+import urllib.request
 import uuid
 from datetime import datetime, timezone
 
 import boto3
+from botocore.exceptions import ClientError
 
 _table = None
+_creds = None
+
+SYMBOLS = [s.strip().upper() for s in os.environ.get("SYMBOLS", "AMZN,NVDA,AAPL").split(",") if s.strip()]
+ALPACA_URL = "https://data.alpaca.markets/v2/stocks/snapshots"
 
 MAX_NAME = 80
 MAX_EMAIL = 120
@@ -28,6 +36,114 @@ def table():
     if _table is None:
         _table = boto3.resource("dynamodb").Table(os.environ["TABLE_NAME"])
     return _table
+
+
+class MarketDataError(Exception):
+    """Something went wrong getting quotes; the message is safe to show to visitors."""
+
+
+def credentials():
+    """Alpaca key id + secret, read once from encrypted Parameter Store values."""
+    global _creds
+    if _creds is None:
+        names = [os.environ["ALPACA_KEY_PARAM"], os.environ["ALPACA_SECRET_PARAM"]]
+        try:
+            res = boto3.client("ssm").get_parameters(Names=names, WithDecryption=True)
+        except ClientError:
+            raise MarketDataError("Market data keys could not be read.") from None
+        found = {p["Name"]: p["Value"] for p in res["Parameters"]}
+        if len(found) != len(names):
+            raise MarketDataError("Market data is not configured yet.")
+        _creds = (found[names[0]], found[names[1]])
+    return _creds
+
+
+def fetch_snapshots(symbols):
+    key, secret = credentials()
+    req = urllib.request.Request(
+        f"{ALPACA_URL}?symbols={','.join(symbols)}&feed=iex",
+        headers={"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": secret, "Accept": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=8) as res:
+            data = json.loads(res.read().decode())
+    except urllib.error.HTTPError as err:
+        raise MarketDataError(f"Market data provider returned {err.code}.") from None
+    except (urllib.error.URLError, TimeoutError, ValueError):
+        raise MarketDataError("Could not reach the market data provider.") from None
+    return data.get("snapshots", data)
+
+
+def build_quotes(snapshots):
+    """Turn Alpaca snapshots into the small shape the page needs."""
+    quotes = []
+    for symbol in SYMBOLS:
+        snap = snapshots.get(symbol)
+        if not snap:
+            continue
+        trade = snap.get("latestTrade") or {}
+        today = snap.get("dailyBar") or {}
+        price = trade.get("p")
+        if price is None:
+            price = today.get("c")
+        if price is None:
+            continue
+        prev = (snap.get("prevDailyBar") or {}).get("c")
+        change = round(price - prev, 2) if prev else None
+        quotes.append(
+            {
+                "symbol": symbol,
+                "price": round(price, 2),
+                "prevClose": round(prev, 2) if prev else None,
+                "change": change,
+                "changePercent": round(change / prev * 100, 2) if prev else None,
+                "open": round(today["o"], 2) if today.get("o") is not None else None,
+                "tradeTime": trade.get("t"),
+            }
+        )
+    return quotes
+
+
+def refresh_quotes():
+    quotes = build_quotes(fetch_snapshots(SYMBOLS))
+    if not quotes:
+        raise MarketDataError("The provider returned no quotes.")
+    updated = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    table().put_item(Item={"pk": "QUOTES", "quotes": json.dumps(quotes), "updatedAt": updated})
+    return quotes, updated
+
+
+def scheduled_refresh():
+    """EventBridge entry point: fetch fresh quotes and store them."""
+    try:
+        quotes, updated = refresh_quotes()
+    except MarketDataError as err:
+        print(json.dumps({"event": "quotes_refresh_failed", "error": str(err)}))
+        return {"ok": False, "error": str(err)}
+    print(json.dumps({"event": "quotes_refreshed", "count": len(quotes)}))
+    return {"ok": True, "count": len(quotes), "updatedAt": updated}
+
+
+def get_quotes():
+    """Serve stored quotes; on a cold start with nothing stored, fetch once."""
+    item = table().get_item(Key={"pk": "QUOTES"}).get("Item")
+    if item:
+        quotes, updated = json.loads(item["quotes"]), item["updatedAt"]
+    else:
+        try:
+            quotes, updated = refresh_quotes()
+        except MarketDataError as err:
+            return respond(503, {"error": str(err)})
+    return respond(
+        200,
+        {
+            "quotes": quotes,
+            "updatedAt": updated,
+            "source": "Alpaca Market Data (IEX feed)",
+            "servedBy": "AWS Lambda",
+            "region": os.environ.get("AWS_REGION", "unknown"),
+        },
+    )
 
 
 def respond(status, body):
@@ -139,6 +255,8 @@ def daily_snapshot():
 
 def handler(event, context):
     # Scheduled invocations come from EventBridge, not API Gateway.
+    if event.get("task") == "refresh_quotes":
+        return scheduled_refresh()
     if event.get("source") == "aws.events" or event.get("detail-type") == "Scheduled Event":
         return daily_snapshot()
 
@@ -149,6 +267,8 @@ def handler(event, context):
         return record_visit()
     if method == "GET" and path.endswith("/api/visits"):
         return get_visits()
+    if method == "GET" and path.endswith("/api/quotes"):
+        return get_quotes()
     if method == "GET" and path.endswith("/api/stats"):
         return get_stats()
     if method == "POST" and path.endswith("/api/contact"):

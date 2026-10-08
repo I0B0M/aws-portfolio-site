@@ -937,3 +937,40 @@ main { counter-reset: section; }
 .live__how code { font-family: var(--font-mono); font-size: 13px; }
 .live__wait { color: var(--ink-soft); }
 .stat__num--text { font-size: 26px; }
+
+/* MARKET PULSE */
+#live { --up: #136c2e; --up-bg: #d5f0dc; --down: #a31515; --down-bg: #fbdada; --flat: #3b3b3b; --flat-bg: #e8e4d6; }
+[data-theme="dark"] #live { --up: #7be39a; --up-bg: #12351f; --down: #ff9d9d; --down-bg: #3d1717; --flat: #cfd6e8; --flat-bg: #1d2750; }
+
+.pulse { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.pulse__wait { color: var(--ink-soft); grid-column: 1 / -1; }
+.ticker { padding: 22px; display: grid; gap: 10px; }
+.ticker__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.ticker__symbol { font-family: var(--font-display); font-size: 30px; line-height: 1; }
+.ticker__name { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
+.ticker__price { font-family: var(--font-display); font-size: 40px; line-height: 1.05; }
+.ticker__change {
+  justify-self: start;
+  padding: 4px 12px;
+  font: 600 15px var(--font-mono);
+  border: 2px solid currentColor;
+  border-radius: 999px;
+}
+.ticker__change--up { color: var(--up); background: var(--up-bg); }
+.ticker__change--down { color: var(--down); background: var(--down-bg); }
+.ticker__change--flat { color: var(--flat); background: var(--flat-bg); }
+.ticker__detail { display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+.pulse__meta { margin-top: 14px; font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
+.pulse__error { grid-column: 1 / -1; padding: 22px; }
+
+details.live__console > summary { cursor: pointer; list-style: none; }
+details.live__console > summary::-webkit-details-marker { display: none; }
+details.live__console > summary::before { content: "▸ "; }
+details.live__console[open] > summary::before { content: "▾ "; }
+details.live__console[open] > summary { margin-bottom: 14px; }
+details.live__console .stats { margin-bottom: 18px; }
+
+@media (max-width: 760px) {
+  .pulse { grid-template-columns: 1fr; }
+  .ticker__price { font-size: 34px; }
+}

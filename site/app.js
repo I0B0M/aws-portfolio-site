@@ -94,6 +94,82 @@
     showStats(res);
   });
 
+  // ---- Market Pulse: stock quotes served by the Lambda API ----
+  var NAMES = { AMZN: "Amazon", NVDA: "NVIDIA", AAPL: "Apple", MSFT: "Microsoft", GOOGL: "Alphabet", TSLA: "Tesla" };
+  var pulseEl = document.getElementById("pulse");
+  var metaEl = document.getElementById("pulse-meta");
+  var rawEl = document.getElementById("pulse-json");
+  var quotesLogged = false;
+  var lastUpdated = null;
+
+  function money(n) {
+    return "$" + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function ago(iso) {
+    var secs = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
+    if (secs < 90) return "just now";
+    var mins = Math.round(secs / 60);
+    if (mins < 90) return mins + " min ago";
+    var hours = Math.round(mins / 60);
+    return hours < 48 ? hours + " h ago" : Math.round(hours / 24) + " days ago";
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  function tickerCard(q) {
+    var card = el("article", "card ticker");
+    var top = el("div", "ticker__top");
+    top.append(el("span", "ticker__symbol", q.symbol), el("span", "ticker__name", NAMES[q.symbol] || ""));
+    card.append(top, el("div", "ticker__price", money(q.price)));
+
+    var dir = q.change === null ? "flat" : q.change > 0 ? "up" : q.change < 0 ? "down" : "flat";
+    var arrow = dir === "up" ? "▲ " : dir === "down" ? "▼ " : "• ";
+    var label = q.change === null
+      ? "No prior close"
+      : arrow + (q.change > 0 ? "+" : "") + q.change.toFixed(2) + " (" + (q.changePercent > 0 ? "+" : "") + q.changePercent.toFixed(2) + "%)";
+    card.append(el("span", "ticker__change ticker__change--" + dir, label));
+
+    var detail = el("div", "ticker__detail");
+    if (q.prevClose !== null) detail.append(el("span", "", "Prev close " + money(q.prevClose)));
+    if (q.open !== null) detail.append(el("span", "", "Open " + money(q.open)));
+    card.append(detail);
+    return card;
+  }
+
+  function renderMeta() {
+    if (metaEl && lastUpdated) metaEl.textContent = "Updated " + ago(lastUpdated) + " · Alpaca Market Data (IEX) · via AWS Lambda + EventBridge";
+  }
+
+  function showQuotes(res) {
+    if (!pulseEl) return;
+    if (rawEl) rawEl.textContent = res.json ? JSON.stringify(res.json, null, 2) : res.text;
+    pulseEl.replaceChildren();
+    if (!res.ok || !res.json || !res.json.quotes) {
+      var box = el("div", "card pulse__error");
+      box.append(el("p", "", (res.json && res.json.error) || "Quotes are unavailable right now. Please try again shortly."));
+      pulseEl.append(box);
+      if (metaEl) metaEl.textContent = "";
+      return;
+    }
+    res.json.quotes.forEach(function (q) { pulseEl.append(tickerCard(q)); });
+    lastUpdated = res.json.updatedAt;
+    renderMeta();
+  }
+
+  function loadQuotes() {
+    return api("GET", "/api/quotes").then(function (res) {
+      if (!quotesLogged) { logCall(res); quotesLogged = true; }
+      showQuotes(res);
+    });
+  }
+  loadQuotes();
+  setInterval(loadQuotes, 60000);
+  setInterval(renderMeta, 30000);
+
   var form = document.getElementById("contact-form");
   if (!form) return;
   var statusEl = document.getElementById("contact-status");

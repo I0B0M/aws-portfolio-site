@@ -152,6 +152,12 @@ Resources:
             RestApiId: !Ref PortfolioApi
             Path: /api/visits
             Method: GET
+        Stats:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PortfolioApi
+            Path: /api/stats
+            Method: GET
         Contact:
           Type: Api
           Properties:

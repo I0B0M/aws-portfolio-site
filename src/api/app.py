@@ -5,6 +5,7 @@ One DynamoDB table holds everything, keyed by `pk`:
   MSGCOUNT         running total of contact messages
   MSG#<ts>#<id>    one contact message
   STATS#<date>     one daily snapshot, written by the EventBridge schedule
+  LATEST           copy of the newest snapshot, so the site can read it in one call
 """
 import json
 import os
@@ -62,6 +63,29 @@ def get_visits():
     return respond(200, {"count": read_count("COUNTER")})
 
 
+def get_stats():
+    """Everything the page's 'Live from AWS' section shows, in one response."""
+    latest = table().get_item(Key={"pk": "LATEST"}).get("Item")
+    snapshot = None
+    if latest:
+        snapshot = {
+            "date": latest["date"],
+            "visits": int(latest["visits"]),
+            "messages": int(latest["messages"]),
+        }
+    return respond(
+        200,
+        {
+            "visits": read_count("COUNTER"),
+            "messages": read_count("MSGCOUNT"),
+            "latestSnapshot": snapshot,
+            "servedBy": "AWS Lambda",
+            "region": os.environ.get("AWS_REGION", "unknown"),
+            "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        },
+    )
+
+
 def submit_contact(raw_body):
     try:
         data = json.loads(raw_body or "{}")
@@ -108,6 +132,7 @@ def daily_snapshot():
         "messages": read_count("MSGCOUNT"),
     }
     table().put_item(Item=item)
+    table().put_item(Item={**item, "pk": "LATEST", "date": today})
     print(json.dumps({"event": "daily_snapshot", **item}))
     return {"ok": True, **item}
 
@@ -124,6 +149,8 @@ def handler(event, context):
         return record_visit()
     if method == "GET" and path.endswith("/api/visits"):
         return get_visits()
+    if method == "GET" and path.endswith("/api/stats"):
+        return get_stats()
     if method == "POST" and path.endswith("/api/contact"):
         return submit_contact(event.get("body"))
     return respond(404, {"error": "Not found."})

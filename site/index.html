@@ -36,6 +36,7 @@
         <li><a href="#skills"     class="nav__link">Skills</a></li>
         <li><a href="#projects"   class="nav__link">Projects</a></li>
         <li><a href="#experience" class="nav__link">Experience</a></li>
+        <li><a href="#live"       class="nav__link">Live API</a></li>
         <li><a href="#contact"    class="nav__link">Contact</a></li>
         <li><a href="assets/resume.pdf" class="nav__cta" target="_blank" rel="noopener">Resume</a></li>
         <li>
@@ -311,6 +312,30 @@
             </ul>
           </li>
         </ol>
+      </div>
+    </section>
+
+    <!-- LIVE FROM AWS: shows real responses from the Lambda API -->
+    <section class="section" id="live">
+      <div class="container">
+        <header class="section__header">
+          <span class="section__label">Live</span>
+          <h2 class="section__title">Live from AWS</h2>
+        </header>
+        <p class="live__intro">When this page loaded, your browser called a Lambda function through API Gateway. Below is what came back, as it happened.</p>
+        <ul class="stats">
+          <li class="card stat"><b class="stat__num" id="live-visits">…</b><span class="stat__label">Total visits</span></li>
+          <li class="card stat"><b class="stat__num" id="live-messages">…</b><span class="stat__label">Messages received</span></li>
+          <li class="card stat"><b class="stat__num" id="live-snapshot">…</b><span class="stat__label">Visits at last daily snapshot (EventBridge)</span></li>
+          <li class="card stat"><b class="stat__num" id="live-latency">…</b><span class="stat__label">API round trip</span></li>
+        </ul>
+        <div class="card live__console">
+          <h3 class="live__heading">Raw API responses</h3>
+          <div id="live-log" class="live__log" aria-live="polite">
+            <p class="live__wait">Calling the API…</p>
+          </div>
+        </div>
+        <p class="live__how"><code>Browser</code> → <code>CloudFront</code> → <code>API Gateway (API key)</code> → <code>Lambda</code> → <code>DynamoDB</code>. EventBridge runs the Lambda daily to snapshot the totals.</p>
       </div>
     </section>
 

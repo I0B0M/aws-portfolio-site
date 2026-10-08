@@ -110,3 +110,24 @@ def test_eventbridge_event_writes_daily_snapshot(fake_table, event):
     result = app.handler(event, None)
     assert result["ok"] is True and result["visits"] == 2 and result["messages"] == 0
     assert any(k.startswith("STATS#") for k in fake_table.items)
+
+
+def test_stats_before_any_snapshot(fake_table):
+    call("POST", "/api/visit")
+    status, body = call("GET", "/api/stats")
+    assert status == 200
+    assert body["visits"] == 1 and body["messages"] == 0
+    assert body["latestSnapshot"] is None
+    assert body["servedBy"] == "AWS Lambda" and body["timestamp"]
+
+
+def test_stats_reports_latest_snapshot(fake_table):
+    call("POST", "/api/visit")
+    call("POST", "/api/visit")
+    app.handler({"source": "aws.events"}, None)
+    call("POST", "/api/visit")
+    status, body = call("GET", "/api/stats")
+    assert status == 200
+    assert body["visits"] == 3
+    assert body["latestSnapshot"]["visits"] == 2  # frozen at snapshot time, not live
+    assert body["latestSnapshot"]["date"]

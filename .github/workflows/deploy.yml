@@ -1,0 +1,72 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write # lets the job sign in to AWS with OIDC
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-2
+  STACK_NAME: aws-portfolio
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest boto3 cfn-lint
+      - run: cfn-lint template.yaml infra/github-oidc.yaml
+      - run: pytest -q
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy backend (Lambda, API, EventBridge, CloudFront, S3)
+        run: |
+          sam build
+          sam deploy \
+            --stack-name "$STACK_NAME" \
+            --resolve-s3 \
+            --capabilities CAPABILITY_IAM \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset
+
+      - name: Read stack outputs
+        id: out
+        run: |
+          q() { aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+                  --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }
+          echo "bucket=$(q SiteBucketName)" >> "$GITHUB_OUTPUT"
+          echo "dist=$(q DistributionId)" >> "$GITHUB_OUTPUT"
+          echo "url=$(q SiteUrl)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload site to S3
+        run: aws s3 sync site/ "s3://${{ steps.out.outputs.bucket }}/" --delete
+
+      - name: Invalidate CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id "${{ steps.out.outputs.dist }}" --paths "/*"
+
+      - name: Live URL
+        run: echo "Deployed to ${{ steps.out.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"

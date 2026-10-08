@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ibrahim Chhapra — Portfolio</title>
+  <meta name="description" content="Ibrahim Chhapra is a Computer Science student and software engineer who builds full-stack, data, and AI systems." />
+  <meta name="theme-color" content="#f6f0e3" />
+
+  <!-- Link previews (LinkedIn, Discord, iMessage): replace your-domain.com with your site's URL -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://your-domain.com/" />
+  <meta property="og:title" content="Ibrahim Chhapra — Portfolio" />
+  <meta property="og:description" content="Computer Science student who builds cloud apps on AWS." />
+  <meta property="og:image" content="https://your-domain.com/assets/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style_2.css" />
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="#top" class="nav__logo">Ibrahim's <em>Portfolio</em></a>
+      <ul class="nav__links">
+        <li><a href="#about"      class="nav__link">About</a></li>
+        <li><a href="#skills"     class="nav__link">Skills</a></li>
+        <li><a href="#projects"   class="nav__link">Projects</a></li>
+        <li><a href="#experience" class="nav__link">Experience</a></li>
+        <li><a href="#contact"    class="nav__link">Contact</a></li>
+        <li><a href="assets/resume.pdf" class="nav__cta" target="_blank" rel="noopener">Resume</a></li>
+        <li>
+          <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" aria-pressed="false">
+            <span class="theme-toggle__icon" aria-hidden="true"></span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <!-- Status: update it, or delete this line if you're not looking right now -->
+          <p class="hero__status">Open to Summer 2026 internships</p>
+          <h1 class="hero__name">Ibrahim<br /><em>Chhapra</em></h1>
+          <p class="hero__bio"><strong>CS student &amp; software engineer.</strong> I build full-stack platforms, real-time data pipelines, and AI/RAG systems — from CRM/ERP suites serving thousands of schools to fintech engines processing transactions at scale.</p>
+          <div class="hero__actions">
+            <a href="#projects" class="btn btn--fill">View Projects <span aria-hidden="true">→</span></a>
+            <!-- Replace assets/resume.pdf with your own résumé (keep the file name) -->
+            <a href="assets/resume.pdf" class="btn btn--outline" download>Download Resume <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <!-- Replace assets/photo.jpg with your own photo (about 1200px wide keeps it fast) -->
+        <figure class="photo">
+          <img src="assets/photo.jpg" alt="Portrait of Muhammad Ibrahim Chhapra" class="photo__img" width="820" height="775" fetchpriority="high" />
+        </figure>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <div class="container">
+        <header class="section__header">
+          <span class="section__label">About</span>
+          <h2 class="section__title">Who I Am</h2>
+        </header>
+        <div class="about">
+          <div class="about__text">
+            <p class="about__lead">I'm a Computer Science student and software engineer who likes turning messy, real-world operations into fast, reliable systems.</p>
+            <p>I study CS at Florida International University (4.0 GPA, Gold &amp; Blue Scholarship) after an A.A. at Miami Dade College. Across internships I've shipped production software — rebuilding a CRM/ERP for a 7,000-school network, launching customer portals, and putting LLM-powered RAG assistants in front of real users.</p>
+            <p>On the side I build data-heavy projects: a real-time payment reconciliation engine, a fintech risk/portfolio engine on live market data, and ML models for crash prediction with the U.S. DOT.</p>
+            <p class="about__now"><strong>Currently:</strong> Software Engineering Intern at Archangel Education &amp; Technology · building distributed and AI systems</p>
+          </div>
+          <dl class="card details">
+            <div class="details__row"><dt>University</dt><dd>Florida International University</dd></div>
+            <div class="details__row"><dt>Degree</dt><dd>B.S. Computer Science</dd></div>
+            <div class="details__row"><dt>Graduating</dt><dd>May 2028</dd></div>
+            <div class="details__row"><dt>Based in</dt><dd>Miami, FL</dd></div>
+          </dl>
+        </div>
+        <!-- Edit the numbers below, or delete stats that do not apply to you -->
+        <ul class="stats">
+          <li class="card stat"><b class="stat__num">4.0</b><span class="stat__label">GPA</span></li>
+          <li class="card stat"><b class="stat__num">5</b><span class="stat__label">Engineering roles</span></li>
+          <li class="card stat"><b class="stat__num">7,000</b><span class="stat__label">School network served</span></li>
+          <li class="card stat"><b class="stat__num">508</b><span class="stat__label">Req/s on LedgerFlow</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SKILLS | Copy a .skill-group to add a category -->
+    <section class="section" id="skills">
+      <div class="container">
+        <header class="section__header">
+          <span class="section__label">Skills</span>
+          <h2 class="section__title">Skills &amp; Tools</h2>
+        </header>
+        <div class="skill-groups">
+          <div class="card skill-group">
+            <h3 class="skill-group__title">Languages</h3>
+            <ul class="chips">
+              <li class="chip">Python</li>
+              <li class="chip">SQL</li>
+              <li class="chip">TypeScript</li>
+              <li class="chip">JavaScript</li>
+              <li class="chip">Java</li>
+              <li class="chip">C++</li>
+              <li class="chip">R</li>
+            </ul>
+          </div>
+          <div class="card skill-group">
+            <h3 class="skill-group__title">Backend &amp; Web</h3>
+            <ul class="chips">
+              <li class="chip">NestJS</li>
+              <li class="chip">Node.js</li>
+              <li class="chip">FastAPI</li>
+              <li class="chip">GraphQL</li>
+              <li class="chip">React</li>
+              <li class="chip">Next.js</li>
+              <li class="chip">PostgreSQL</li>
+              <li class="chip">MongoDB</li>
+            </ul>
+          </div>
+          <div class="card skill-group">
+            <h3 class="skill-group__title">Data &amp; Distributed Systems</h3>
+            <ul class="chips">
+              <li class="chip">Kafka</li>
+              <li class="chip">Airflow</li>
+              <li class="chip">Redis</li>
+              <li class="chip">TimescaleDB</li>
+              <li class="chip">ETL pipelines</li>
+              <li class="chip">Docker</li>
+              <li class="chip">GitHub Actions</li>
+            </ul>
+          </div>
+          <div class="card skill-group">
+            <h3 class="skill-group__title">AWS &amp; Cloud</h3>
+            <ul class="chips">
+              <li class="chip">SageMaker</li>
+              <li class="chip">Redshift</li>
+              <li class="chip">ECS</li>
+              <li class="chip">Lambda</li>
+            </ul>
+          </div>
+          <div class="card skill-group">
+            <h3 class="skill-group__title">Machine Learning &amp; AI</h3>
+            <ul class="chips">
+              <li class="chip">PyTorch</li>
+              <li class="chip">scikit-learn</li>
+              <li class="chip">XGBoost</li>
+              <li class="chip">NumPy / SciPy</li>
+              <li class="chip">LangChain</li>
+              <li class="chip">LangGraph</li>
+              <li class="chip">RAG pipelines</li>
+              <li class="chip">OpenAI API</li>
+            </ul>
+          </div>
+          <div class="card skill-group">
+            <h3 class="skill-group__title">Data Science &amp; Analytics</h3>
+            <ul class="chips">
+              <li class="chip">Feature engineering</li>
+              <li class="chip">Statistical analysis</li>
+              <li class="chip">Anomaly detection</li>
+              <li class="chip">Power BI</li>
+              <li class="chip">Tableau</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS | Copy an <article> to add a project.
+         Point the title link at the project's main link (live site or GitHub).
+         Optional screenshot: put <img src="assets/projects/your-project.jpg" alt="Screenshot of ..." loading="lazy" />
+         inside .project__banner (see Project One). -->
+    <section class="section" id="projects">
+      <div class="container">
+        <header class="section__header">
+          <span class="section__label">Projects</span>
+          <h2 class="section__title">Selected Work</h2>
+        </header>
+        <div class="projects">
+          <article class="card project">
+            <div class="project__banner"></div>
+            <div class="project__body">
+              <h3 class="project__title"><a href="https://github.com/I0B0M" target="_blank" rel="noopener">LedgerFlow</a></h3>
+              <p class="project__desc">A real-time payment processing &amp; reconciliation engine: a double-entry PostgreSQL ledger with Redis SETNX idempotency and a Kafka-driven chargeback state machine with Airflow auto-escalation.</p>
+              <p class="project__impact"><strong>Result:</strong> processed 50K+ transactions at 508 req/s, p99 = 31 ms, with 56 tests and 0 failures; reconciliation ETL caught 100% of injected discrepancies across 100K transactions.</p>
+              <ul class="tags">
+                <li class="tag">PostgreSQL</li><li class="tag">Kafka</li><li class="tag">Redis</li><li class="tag">Airflow</li>
+              </ul>
+              <div class="project__links">
+                <a href="https://github.com/I0B0M" target="_blank" rel="noopener" class="project__link">GitHub ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card project">
+            <div class="project__banner"></div>
+            <div class="project__body">
+              <h3 class="project__title"><a href="https://github.com/I0B0M" target="_blank" rel="noopener">EquityPulse</a></h3>
+              <p class="project__desc">A real-time fintech risk &amp; portfolio engine streaming live NYSE/NASDAQ tick data through an LZ4-compressed Kafka pipeline into TimescaleDB and a Redis ring buffer, served via FastAPI.</p>
+              <p class="project__impact"><strong>Result:</strong> &lt;200 ms tick-to-dashboard latency and ~0.1 ms reads; VaR, Sharpe, Sortino and a SciPy efficient-frontier optimizer over 10,000 Monte Carlo simulations.</p>
+              <ul class="tags">
+                <li class="tag">FastAPI</li><li class="tag">Kafka</li><li class="tag">TimescaleDB</li><li class="tag">NumPy / SciPy</li>
+              </ul>
+              <div class="project__links">
+                <a href="https://github.com/I0B0M" target="_blank" rel="noopener" class="project__link">GitHub ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card project">
+            <div class="project__banner"></div>
+            <div class="project__body">
+              <h3 class="project__title"><a href="https://github.com/I0B0M" target="_blank" rel="noopener">Transportation Crash Prediction</a></h3>
+              <p class="project__desc">ML risk modeling with Columbia University and the U.S. Dept. of Transportation — geospatial features engineered from 1.2M NYC crash records, benchmarking XGBoost vs. Random Forest and Logistic Regression.</p>
+              <p class="project__impact"><strong>Result:</strong> XGBoost maximized F1 with SHAP attribution flagging driver inattention; findings delivered to U.S. DOT covering 47 high-risk intersections.</p>
+              <ul class="tags">
+                <li class="tag">XGBoost</li><li class="tag">GeoPandas</li><li class="tag">PostGIS</li><li class="tag">SHAP</li>
+              </ul>
+              <div class="project__links">
+                <a href="https://github.com/I0B0M" target="_blank" rel="noopener" class="project__link">GitHub ↗</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="card project">
+            <div class="project__banner"></div>
+            <div class="project__body">
+              <h3 class="project__title"><a href="https://github.com/I0B0M" target="_blank" rel="noopener">HR Compliance Audit Platform</a></h3>
+              <p class="project__desc">An end-to-end HR compliance audit platform with RBAC across 6 roles, multi-tenant data isolation, audit-log filtering, and pay-equity flagging via a Findings layer.</p>
+              <p class="project__impact"><strong>Result:</strong> live and piloted with 3 HR firms managing 500+ employee records, cutting manual audit-prep time by ~40%.</p>
+              <ul class="tags">
+                <li class="tag">Node.js</li><li class="tag">Express</li><li class="tag">MongoDB</li><li class="tag">RBAC</li>
+              </ul>
+              <div class="project__links">
+                <a href="https://github.com/I0B0M" target="_blank" rel="noopener" class="project__link">GitHub ↗</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE | Copy an <li class="timeline__item"> to add a role (internships, TA, clubs, research) -->
+    <section class="section" id="experience">
+      <div class="container">
+        <header class="section__header">
+          <span class="section__label">Experience</span>
+          <h2 class="section__title">Experience &amp; Leadership</h2>
+        </header>
+        <ol class="timeline">
+          <li class="card timeline__item">
+            <div class="timeline__head">
+              <h3 class="timeline__role">Software Engineering Intern</h3>
+              <span class="timeline__date"><time datetime="2026-05">May 2026</time> – Present</span>
+            </div>
+            <p class="timeline__org">Archangel Education &amp; Technology</p>
+            <ul class="timeline__points">
+              <li>Shipped Archangel Brain, an LLM-powered RAG assistant (LangGraph, LangChain, OpenAI embeddings) into the company CRM — used by ~50 staff for self-service Q&amp;A.</li>
+              <li>Rebuilding the CRM/ERP from the ground up in a 20-developer team (NestJS, GraphQL, PostgreSQL, TypeORM, Redis, React, AWS); leading a 6-intern sub-team.</li>
+              <li>Resolved 50+ tickets on the legacy suite serving a 7,000-school network, cutting average resolution time from 48 hrs to 6 hrs.</li>
+              <li>Launched a customers portal (Next.js, NextAuth, Tailwind) live for Miami Dade College with role-based auth and approval workflows.</li>
+            </ul>
+          </li>
+          <li class="card timeline__item">
+            <div class="timeline__head">
+              <h3 class="timeline__role">Software Engineering Intern</h3>
+              <span class="timeline__date"><time datetime="2026-04">Apr 2026</time> – <time datetime="2026-05">May 2026</time></span>
+            </div>
+            <p class="timeline__org">Blackstone LaunchPad</p>
+            <ul class="timeline__points">
+              <li>Built and shipped an end-to-end HR compliance audit platform (Node.js, Express, MongoDB) — RBAC across 6 roles, multi-tenant isolation; piloted with 3 HR firms, cutting audit-prep time by ~40%.</li>
+              <li>Delivered TriMerge IQ, an internal RAG chatbot giving ~20 consultants natural-language access to 1,000+ firm documents.</li>
+              <li>Engineered a work-order and workforce-succession system for WASD, the Miami-Dade utility serving 2.4M residents.</li>
+            </ul>
+          </li>
+          <li class="card timeline__item">
+            <div class="timeline__head">
+              <h3 class="timeline__role">Operations Strategy &amp; AI Extern</h3>
+              <span class="timeline__date"><time datetime="2025-06">Summer 2025</time></span>
+            </div>
+            <p class="timeline__org">Amazon</p>
+            <ul class="timeline__points">
+              <li>Queried 6M+ inbound shipment records (SQL, Redshift) across two fulfillment centers, identifying bottlenecks behind a 12%+ throughput loss.</li>
+              <li>Prototyped a SageMaker demand-forecasting pipeline comparing ARIMA, XGBoost and LSTM — XGBoost won on RMSE with 3× faster inference.</li>
+            </ul>
+          </li>
+          <li class="card timeline__item">
+            <div class="timeline__head">
+              <h3 class="timeline__role">Software Engineering Intern</h3>
+              <span class="timeline__date"><time datetime="2025-06">Summer 2025</time></span>
+            </div>
+            <p class="timeline__org">Pinnacle International</p>
+            <ul class="timeline__points">
+              <li>Built a full-stack operations dashboard (React, Node.js, Express/RBAC, MongoDB) ingesting real-time data from 4 facility endpoints — cut reporting lag from 24 hrs to &lt;60 sec.</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="ridges" aria-hidden="true">
+      <svg viewBox="0 0 1440 160" preserveAspectRatio="none">
+        <path fill="#5b7cff" d="M0 160 L0 90 L120 60 L220 95 L340 30 L460 80 L560 50 L700 100 L820 20 L960 85 L1080 55 L1200 90 L1320 40 L1440 75 L1440 160 Z" />
+        <path fill="#1e40af" d="M0 160 L0 115 L150 80 L260 110 L400 70 L520 105 L660 75 L780 115 L900 65 L1040 110 L1180 80 L1300 110 L1440 90 L1440 160 Z" />
+        <path fill="#0b1437" d="M0 160 L0 135 L180 110 L320 140 L480 105 L640 138 L800 112 L980 142 L1140 115 L1300 138 L1440 120 L1440 160 Z" />
+      </svg>
+    </div>
+
+    <!-- CONTACT -->
+    <section class="section section--dark" id="contact">
+      <div class="container">
+        <div class="contact">
+          <header class="section__header">
+            <h2 class="section__title">Let's work <em>together.</em></h2>
+            <p class="contact__sub">Open to internships, co-ops, and side projects. I reply within 24 hours.</p>
+          </header>
+          <div class="contact__links">
+            <a href="mailto:ibrahimchhapra05@gmail.com" class="contact__link">
+              <span>Email<small>ibrahimchhapra05@gmail.com</small></span>
+              <span class="contact__arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="https://github.com/I0B0M" target="_blank" rel="noopener" class="contact__link">
+              <span>GitHub<small>@I0B0M</small></span>
+              <span class="contact__arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="https://linkedin.com/in/ibrahimchhapra" target="_blank" rel="noopener" class="contact__link">
+              <span>LinkedIn<small>in/ibrahimchhapra</small></span>
+              <span class="contact__arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="assets/resume.pdf" download class="contact__link">
+              <span>Resume<small>PDF download</small></span>
+              <span class="contact__arrow" aria-hidden="true">↓</span>
+            </a>
+          </div>
+
+          <form id="contact-form" class="cform" novalidate>
+            <h3 class="cform__title">Or send a message</h3>
+            <label class="cform__field">Name
+              <input type="text" name="name" maxlength="80" autocomplete="name" required />
+            </label>
+            <label class="cform__field">Email
+              <input type="email" name="email" maxlength="120" autocomplete="email" required />
+            </label>
+            <label class="cform__field">Message
+              <textarea name="message" rows="5" maxlength="2000" required></textarea>
+            </label>
+            <!-- Honeypot: hidden from people, bots fill it in -->
+            <input type="text" name="website" class="cform__trap" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <button type="submit" class="btn btn--fill" id="contact-submit">Send message <span aria-hidden="true">→</span></button>
+            <p id="contact-status" class="cform__status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© 2026 Ibrahim Chhapra</span>
+      <span>Hosted on <strong>AWS S3 + CloudFront</strong> · <span id="visit-count" aria-live="polite">Visits: …</span></span>
+      <a href="#top" class="footer__top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
